@@ -1,0 +1,6 @@
+.env
+__pycache__/
+LLMAnalyse/LLMAnalyse
+.terraform/
+terraform.tfstate
+terraform.tfstate.backup

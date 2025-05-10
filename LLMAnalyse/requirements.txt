@@ -1,0 +1,12 @@
+langchain
+langchain-community
+langchain-tavily
+python-dotenv
+langgraph
+notebook
+langchain-anthropic
+grandalf
+pygraphviz
+mcp
+langchain-mcp-adapters
+langgraph.checkpoint.sqlite
