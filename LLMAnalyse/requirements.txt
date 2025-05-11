@@ -10,3 +10,5 @@ pygraphviz
 mcp
 langchain-mcp-adapters
 langgraph.checkpoint.sqlite
+Elasticsearch
+FastMCP

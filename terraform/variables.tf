@@ -6,7 +6,7 @@ variable "key_pair_name" {
 variable "instance_names" {
   description = "A list of names for the EC2 instances."
   type        = list(string)
-  default     = ["Instance1"]
+  default     = ["Prod_Server", "Attacker"]
 }
 
 variable "aws_region" {
