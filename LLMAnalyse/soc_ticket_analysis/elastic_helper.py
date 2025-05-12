@@ -23,7 +23,7 @@ def search_audit_logs(messagedata):
             })
     
         es_query = {"bool": {"filter": []}}
-        es_query["bool"]["filter"].append(messagedata)
+        es_query["bool"]["filter"].append({"match": messagedata})
         time_range = {"range": {"@timestamp": {}}}
         time_range["range"]["@timestamp"]["gte"] = "now-7d"
         time_range["range"]["@timestamp"]["lte"] = "now"
@@ -48,5 +48,5 @@ def search_audit_logs(messagedata):
         return (f"Failed to initialize Elasticsearch client: {str(e)}")
 
 if __name__ == "__main__":
-    s = search_audit_logs("cp")
+    s = search_audit_logs({"messages.data": "whoami"})
     print(s)
