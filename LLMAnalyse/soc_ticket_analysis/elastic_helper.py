@@ -48,5 +48,6 @@ def search_audit_logs(messagedata):
         return (f"Failed to initialize Elasticsearch client: {str(e)}")
 
 if __name__ == "__main__":
-    s = search_audit_logs({"messages.data": "whoami"})
+    #s = search_audit_logs({"messages.data": "whoami"})
+    s = search_audit_logs({'messages.data': 'whoami'})
     print(s)

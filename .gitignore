@@ -4,3 +4,4 @@ LLMAnalyse/LLMAnalyse
 .terraform/
 terraform.tfstate
 terraform.tfstate.backup
+.ipynb_checkpoints

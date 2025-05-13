@@ -15,11 +15,6 @@ if not os.environ.get("ANTHROPIC_API_KEY"):
     print("environment variable ANTHROPIC_API_KEY not set")
     sys.exit(1)
 
-if not os.environ.get("TAVILY_API_KEY"):
-    print("environment variable TAVILY_API_KEYILY not set")
-    sys.exit(1)
-
-
 async def main():
     model = ChatAnthropic(model="claude-3-5-sonnet-latest")
 

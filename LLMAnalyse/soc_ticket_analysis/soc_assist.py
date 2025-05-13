@@ -2,12 +2,10 @@ import sys
 import os
 import sqlite3
 from dotenv import load_dotenv
-from langchain_core.messages import BaseMessage
 from langgraph.prebuilt import create_react_agent
 from langchain_anthropic import ChatAnthropic
 from langgraph.checkpoint.sqlite import SqliteSaver
 from langgraph.graph import StateGraph, END, MessagesState
-from typing import TypedDict
 from langchain_core.messages import SystemMessage, HumanMessage
 from langchain_core.tools import tool
 from pydantic.v1 import BaseModel, Field
@@ -51,8 +49,10 @@ def router_node(state: MultiAgentState):
     return {"question_type": response.content}
 
 
-def elastic_audit_lookup(messagedata):
-
+def elastic_audit_lookup(messagedata: str):
+    """
+    Takes a keyword to search the audit logs for
+    """
     try:
         hosts = [{"host": "127.0.0.1", "port": int("9200"), "scheme": "https"}]
         es = Elasticsearch(
@@ -65,7 +65,7 @@ def elastic_audit_lookup(messagedata):
             })
     
         es_query = {"bool": {"filter": []}}
-        es_query["bool"]["filter"].append({"match": messagedata})
+        es_query["bool"]["filter"].append({"match": {"messages.data": messagedata}})
         time_range = {"range": {"@timestamp": {}}}
         time_range["range"]["@timestamp"]["gte"] = "now-7d"
         time_range["range"]["@timestamp"]["lte"] = "now"
@@ -84,14 +84,14 @@ def elastic_audit_lookup(messagedata):
             }
         )
 
-        print(response)
+        return(response)
         
     except Exception as e:
         return (f"Failed to initialize Elasticsearch client: {str(e)}")
 
 
 def elastic_ioc_lookup(ioc):
-    "Searches all indices and fields for a specific IP address"
+    "Searches all indices and fields for a specific indicator of compromise"
     try:
         hosts = [{"host": "127.0.0.1", "port": 9200, "scheme": "https"}]
         es = Elasticsearch(
@@ -149,8 +149,7 @@ class ElasticQuery(BaseModel):
 
 @tool(args_schema=ElasticQuery)
 def execute_elastic_audit_query(query: str) -> str:
-    """Searches messages.data for audit log events.
-    queries should be in the following form {"messages.data": "<insert_search_term_here>"}
+    """Takes a string and searches for the term within messages.data field in audit log events.
     """
     return elastic_audit_lookup(query)
 
@@ -166,7 +165,7 @@ Elastic to search data and understand security alerts and incidents.
 
 You have two tools at your disposal:
 1. execute_elastic_ioc_query - this accepts a single string for IOC, e.g. an IP address, a hash, a filename and runs a search across all logs
-2. execute_elastic_query - this accepts a query in the format {"messages.data": "<insert_search_term_here>"}.
+2. execute_elastic_query - this accepts a single string term.
 
 Your input will be a SOC alert raised by the SIEM. Use your expertise to pick the correct tool for the job. When giving your recommendations 
 keep in mind that the environment is hosted in AWS. 
@@ -253,6 +252,7 @@ for s in graph.stream({'question': soc_ticket,}, thread, stream_mode="updates"):
     except:
         print(s)
     results.append(s)
+
 
 thread = {"configurable": {"thread_id": "2"}}
 question = '''Analyse the following code
