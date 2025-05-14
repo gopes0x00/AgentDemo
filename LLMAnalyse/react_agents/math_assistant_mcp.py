@@ -23,7 +23,7 @@ async def main():
         args=["mcp_math.py"]
     )
 
-    messages = [HumanMessage(content="Multiply 3 and 4.")]
+    messages = [HumanMessage(content="Hi George")]
 
 
     async with stdio_client(server_params) as (read, write):
