@@ -146,7 +146,6 @@ def elastic_ioc_lookup(ioc):
 class ElasticQuery(BaseModel):
     query: str = Field(description="Elastic query to run")
 
-
 @tool(args_schema=ElasticQuery)
 def execute_elastic_audit_query(query: str) -> str:
     """Takes a string and searches for the term within messages.data field in audit log events.
